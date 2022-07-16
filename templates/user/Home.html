@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
+    <script src="../static/js/jquery.min.js"></script>
+    <!-- Bootstrap -->
+    <link type="text/css" rel="stylesheet" href="../static/css/bootstrap.min.css"/>
+
+    <!-- Slick -->
+    <link type="text/css" rel="stylesheet" href="../static/css/slick.css"/>
+    <link type="text/css" rel="stylesheet" href="../static/css/slick-theme.css"/>
+
+    <!-- nouislider -->
+    <link type="text/css" rel="stylesheet" href="../static/css/nouislider.min.css"/>
+
+    <!-- Font Awesome Icon -->
+    <link rel="stylesheet" href="../static/css/font-awesome.min.css">
+
+    <!-- Custom stlylesheet -->
+    <link type="text/css" rel="stylesheet" href="../static/css/style.css"/>
+    <script>
+
+        function BorrowBook(i) {
+            // let book = i.parentNode.parentNode.parentNode;
+            // book.parentNode.parentNode.removeChild(book.parentNode) //js 删除通过父节点删除子节点
+            let id = i.parentNode.parentNode.attributes.ind.value;   // 书的ID
+
+            // var id = i.parents("tr").find(".td.id").text();
+            console.log(id);
+            $.ajax({
+                type: "post",
+                url: "/user/Borrow",
+                data: {
+                    "id": id
+                },
+                success: (data) => {
+                    // if (data.result == 0) {
+                    //     book.parentNode.parentNode.removeChild(book.parentNode)
+                    // }
+                }
+            })
+        }
+
+        function ReturnBook(i) {
+            // let book = i.parentNode.parentNode.parentNode;
+            // book.parentNode.parentNode.removeChild(book.parentNode) //js 删除通过父节点删除子节点
+            let id = i.parentNode.parentNode.attributes.ind.value;  // 书的ID
+            console.log(id);
+            $.ajax({
+                type: "post",
+                url: "/user/Return",
+                data: {
+                    "id": id
+                },
+                success: (data) => {
+                    // if (data.result == 0) {
+                    //     book.parentNode.parentNode.removeChild(book.parentNode)
+                    // }
+                }
+            })
+        }
+    </script>
+    <title>图书管理系统</title>
+
+    <style>
+        input {
+            border: none;
+        }
+
+        #showtable input {
+            text-align: center;
+        }
+    </style>
+</head>
+<body>
+<!-- HEADER -->
+<header>
+    <!-- TOP HEADER -->
+    <div id="top-header">
+        <div class="container">
+            <ul class="header-links pull-left">
+                <!-- <li><a href="#"><i class="fa fa-phone"></i> +021-95-51-84</a></li>
+                    <li><a href="#"><i class="fa fa-envelope-o"></i> email@email.com</a></li> -->
+                <li><a href="#"><i class="fa fa-clock-o"></i>{{ .nowTime }}</a></li>
+            </ul>
+            <ul class="header-links pull-right">
+                <li><a href="#"><i class="fa fa-user-o"></i> 我的账户</a></li>
+            </ul>
+        </div>
+    </div>
+    <!-- /TOP HEADER -->
+
+    <!-- MAIN HEADER -->
+    <div id="header">
+        <!-- container -->
+        <div class="container">
+            <!-- row -->
+            <div class="row">
+                <!-- LOGO -->
+                <div class="col-md-3">
+                    <div class="header-logo">
+                        <a href="#" class="logo">
+                            <img src="../static/img/logo.png" width="120px" alt="">
+                        </a>
+                    </div>
+                </div>
+                <!-- /LOGO -->
+
+                <!-- SEARCH BAR -->
+                <div class="col-md-6">
+                    <div class="header-search">
+                        <form action="/admin/search" method="post">
+                            <select class="input-select" id="search_select" name="search_select">
+                                <!-- <option value="0">全部</option> -->
+                                <option value="1">书本</option>
+                                <!--                                <option value="2">用户</option>-->
+                                <!--                                <option value="3">记录</option>-->
+                            </select>
+                            <input class="input" id="search_input" name="search_input" placeholder="Search here">
+                            <button class="search-btn" id="search_but">搜索</button>
+                        </form>
+                    </div>
+                </div>
+                <!-- /SEARCH BAR -->
+
+            </div>
+            <!-- row -->
+        </div>
+        <!-- container -->
+    </div>
+    <!-- /MAIN HEADER -->
+</header>
+<!-- /HEADER -->
+
+<!-- NAVIGATION -->
+<nav id="navigation">
+    <!-- container -->
+    <div class="container">
+        <!-- responsive-nav -->
+        <div id="responsive-nav">
+            <!-- NAV -->
+            <ul class="main-nav nav navbar-nav">
+                <!--        <li><a href="/admin/index">管理员</a></li>-->
+
+                <!--        <li><a href="/admin/users">用户管理</a></li>-->
+                <li class="active"><a href="#">图书查询</a></li>
+                <li><a href="/user/record">我的借还</a></li>
+            </ul>
+            <!-- /NAV -->
+        </div>
+        <!-- /responsive-nav -->
+    </div>
+    <!-- /container -->
+</nav>
+<!-- /NAVIGATION -->
+
+
+
+<div class="container">
+    <!-- row -->
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-bordered table-hover ">
+                <thead>
+                <tr>
+                    <th style="text-align: center;">序号</th>
+                    <th style="text-align: center;">书名</th>
+                    <th style="text-align: center;">作者</th>
+                    <th style="text-align: center;">剩余数量</th>
+                    <th style="text-align: center;">详细信息</th>
+                    <th style="text-align: center;">借|还</th>
+                    <!--                    <th style="text-align: center;">时间</th>-->
+<!--                    <th style="text-align: center; color: green;"><i class="fa fa-trash"></i></th>-->
+                </tr>
+                </thead>
+                <tbody id="showtable">
+<!--                {{ with .data }}-->
+                {{ range $ind, $value := . }}
+<!--                {{/* 通过id取ind(即真正的用户id) */}}-->
+                <tr ind="{{ .ID }}" style="text-align: center;">
+<!--                    <form action="Borrow" method="post">-->
+                    <td style="display:none"><input type="text" value="{{ $value.ID }}" ></td>
+                    <td class="td id">{{ $value.ID }}</td>
+                    <td >{{ $value.Title }}</td>
+                    <td>{{ $value.Author }}</td>
+                    <td>{{ $value.State }}</td>
+                    <td>{{ $value.Content }}</td>
+                    <td>
+                        <input type="button" value="借阅" style="background-color: deepskyblue;border: none;border: 1px  black;" onclick="BorrowBook(this)">
+                        <input type="button" value="归还" style="background-color: orangered;border: none;border: 1px  black;" onclick="ReturnBook(this)">
+<!--                        <textarea name = "BookId" style="display:none">{{ $value.ID }}</textarea>-->
+<!--                        <text name = 'BookId' style="display:none">{{ $value.ID }}</text>-->
+<!--                        <button onclick="BorrowBook(this)" style="background-color: deepskyblue;border: none;border: 1px  black;">借阅</button>&nbsp;&nbsp;&nbsp;-->
+<!--                        <button onclick="ReturnBook(this)" style="background-color: orangered;border: none;border: 1px  black;">归还</button>-->
+                    </td>
+<!--                    </form>-->
+
+                </tr>
+                {{ end }}
+<!--                {{ end }}-->
+                </tbody>
+            </table>
+        </div>
+
+    </div>
+</div>
+
+
+</body>
+</html>
+
